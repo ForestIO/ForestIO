@@ -15,6 +15,8 @@ class App extends Component {
     }
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+    this.incrementScore = this.incrementScore.bind(this);
+    this.decrementScore = this.decrementScore.bind(this);
   }
 
   componentDidMount() {
@@ -44,6 +46,24 @@ class App extends Component {
       });
   }
 
+  incrementScore(e) {
+    e.preventDefault();
+
+    let newState = Object.assign({}, this.state);
+    newState.searchResults[e.target.id].score++;
+    this.setState(newState);
+
+  }
+
+  decrementScore(e) {
+    e.preventDefault();
+
+    let newState = Object.assign({}, this.state);
+    newState.searchResults[e.target.id].score--;
+    this.setState(newState);
+
+  }
+
   render() {
     return (
       <div className="App">
@@ -53,8 +73,9 @@ class App extends Component {
         </div>
         <Search
           handleSearchChange={this.handleSearchChange}
-          /*handleSearchSubmit={this.handleSearchSubmit}*/
           searchResults={this.state.searchResults}
+          incrementScore={this.incrementScore}
+          decrementScore={this.decrementScore}
         />
       </div>
     );
