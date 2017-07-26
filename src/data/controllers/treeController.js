@@ -18,21 +18,6 @@ var treeSchema = new Schema({
 let treeController = {};
 var Tree = mongoose.model('Tree', treeSchema);
 
-treeController.findTrees = function (req, res) {
-    // treeQuery is input from tree search
-    let treeQuery = req.body.treeQuery;
-    // Tree.find({}, (err, trees) => {
-    Tree.find({ 'name': { $regex: `.*${treeQuery}*.` } }, (err, trees) => {
-        if (err || !trees) {
-            return res.status(500).json("Invalid treeQuery")
-        } else {
-            console.log('trees -->', trees)
-            res.json(trees);
-        }
-    });
-}
-
-
 treeController.getAllTrees = function (req, res) {
     Tree.find({}, (err, trees) => {
         if (err || !trees) {

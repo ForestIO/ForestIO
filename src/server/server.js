@@ -5,6 +5,7 @@ const app = express();
 
 //controllers
 const treeController = require('./../data/controllers/treeController');
+const branchController = require('./../data/controllers/branchController');
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -17,6 +18,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/trees', (req, res) => {
     treeController.getAllTrees(req, res);
+})
+
+app.get('/branches', (req, res) => {
+    branchController.getAllBranches(req, res);
 })
 
 app.listen(3030);
