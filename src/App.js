@@ -69,15 +69,15 @@ class App extends Component {
     this.setState({treeClicked: e.target.value})
     for(let i=0; i<this.state.searchResults.length; i++){
       if(this.state.searchResults[i].name === this.state.treeClicked){
-        this.setState({branchIndices: this.state.searchResults[i].branches})
-      }
+        this.setState({branchIndices: this.state.searchResults[i].branches});
+      };
     }
     //ex: axios.post('localhost:3030/findbranches',{ids:[1,2,3]}) -> Returns JSON with branches 1,2,3
     console.log('indexes', this.state.branchIndices)
     axios.post(`${API_URL}/findbranches`, {ids: this.state.branchIndices}).then(res=>
     {
       this.setState({branches: res.data})
-    })
+    });
   }
 
  

@@ -13,7 +13,11 @@ class Search extends Component {
             let searchstyler = [{ "background": "rgba(0,0,0,0.2)" }, { "background": "rgba(0,0,0,0.0)" }]
             resultsArray.push(
                 <div style={searchstyler[i % 2]} id={searchResults[i]._id} key={i} className="searchresult">
-                  <button value = {searchResults[i].name} onClick = {this.props.handleTreeClick} type = 'button'>{searchResults[i].name}</button>
+                  <button 
+                  value = {searchResults[i].name} 
+                  onClick = {this.props.handleTreeClick} 
+                  type = 'button'>{searchResults[i].name}
+                  </button>
               
                 </div>)
         }
