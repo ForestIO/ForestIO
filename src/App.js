@@ -3,7 +3,6 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import Search from './Search';
-import Branch from './Branch';
 
 const API_URL = "http://localhost:3030"
 
@@ -14,12 +13,13 @@ class App extends Component {
     this.state = {
       searchText: '',
       searchResults: [],
-      branchIndices: '',
-      branches: []
+      treeClicked: '',
+      branchIndices: [],
+      branches: [],
+      cachedTrees: [],
     }
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
-    this.handleShowBranch = this.handleShowBranch.bind(this);
     this.handleTreeClick = this.handleTreeClick.bind(this);
   }
 
@@ -30,7 +30,6 @@ class App extends Component {
       
       this.setState({
         searchResults: res[0].data,
-        branches : res[1].data
       
       })
     
@@ -38,14 +37,28 @@ class App extends Component {
 
   }
 
+  componentDidMount() {
+    axios.get('http://localhost:3030/trees')
+      .then(res => {
+        this.setState({ searchResults: res.data, cachedTrees: res.data })
+      })
+  }
+
   handleSearchChange(e) {
+
     this.setState({ searchText: e.target.value });
+    const newSearchResults = this.state.cachedTrees.filter((ele) => {
+      return ele.name.toLowerCase().includes(e.target.value.toLowerCase())
+    })
+
+    this.setState({ searchResults: newSearchResults })
+
   }
 
   handleSearchSubmit(e) {
     e.preventDefault();
 
-    axios.post('http://localhost:3000/', { treeQuery: this.state.searchText })
+    axios.get('http://localhost:3030/', { treeQuery: this.state.searchText })
       .then(res => {
         this.setState({ searchResults: res.data })
       });
@@ -53,28 +66,41 @@ class App extends Component {
 
   handleTreeClick(e){
     
-    this.setState({branchIndices: e.target.value})
+    this.setState({treeClicked: e.target.value})
+    for(let i=0; i<this.state.searchResults.length; i++){
+      if(this.state.searchResults[i].name === this.state.treeClicked){
+        this.setState({branchIndices: this.state.searchResults[i].branches})
+      }
+    }
+    //ex: axios.post('localhost:3030/findbranches',{ids:[1,2,3]}) -> Returns JSON with branches 1,2,3
+    console.log('indexes', this.state.branchIndices)
+    axios.post(`${API_URL}/findbranches`, {ids: this.state.branchIndices}).then(res=>
+    {
+      this.setState({branches: res.data})
+    })
   }
 
-  handleShowBranch(e){
-    console.log(e)
-  }
+ 
 
   render() {
     console.log(this.state.searchResults)
     let categories = this.state.searchResults.map(elem => <button  type = "button">{elem.name}</button>)
-    
+    let branch = this.state.branches.map(elem => <div><h1>{elem.name}</h1> <p>{elem.desc}</p> </div>)
     return (
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2>ForestIO</h2>
         </div>
 
-        {/*{categories}*/}
-
-        <Search handleTreeClick={this.handleTreeClick} handleSearchChange={this.handleSearchChange} handleSearchSubmit={this.handleSearchSubmit} searchResults={this.state.searchResults}/>
-        <Branch handleShowBranch={this.handleShowBranch}/>
+        <Search
+          handleTreeClick={this.handleTreeClick}
+          handleSearchChange={this.handleSearchChange}
+          /*handleSearchSubmit={this.handleSearchSubmit}*/
+          searchResults={this.state.searchResults}
+        />
+        {branch}
+      
       </div>
     );
   }
